@@ -7,29 +7,23 @@ use Exception;
 use LogicException;
 use RuntimeException;
 use InvalidArgumentException;
-
 // From PSR-3
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\NullLogger;
-
 // From Pimple
 use Pimple\Container;
-
 // From 'charcoal-config'
 use Charcoal\Config\AbstractEntity;
-
 // From 'charcoal-core'
 use Charcoal\Model\DescribableInterface;
 use Charcoal\Model\DescribableTrait;
 use Charcoal\Validator\ValidatableInterface;
 use Charcoal\Validator\ValidatableTrait;
 use Charcoal\Validator\ValidatorInterface;
-
 // From 'charcoal-translator'
 use Charcoal\Translator\Translation;
 use Charcoal\Translator\TranslatorAwareTrait;
-
 // From 'charcoal-property'
 use Charcoal\Property\DescribablePropertyInterface;
 use Charcoal\Property\DescribablePropertyTrait;
@@ -56,15 +50,15 @@ abstract class AbstractProperty extends AbstractEntity implements
     use TranslatorAwareTrait;
     use ValidatableTrait;
 
-    const DEFAULT_L10N = false;
-    const DEFAULT_MULTIPLE = false;
-    const DEFAULT_HIDDEN = false;
-    const DEFAULT_UNIQUE = false;
-    const DEFAULT_REQUIRED = false;
-    const DEFAULT_ALLOW_NULL = true;
-    const DEFAULT_STORABLE = true;
-    const DEFAULT_VALIDATABLE = true;
-    const DEFAULT_ACTIVE = true;
+    public const DEFAULT_L10N = false;
+    public const DEFAULT_MULTIPLE = false;
+    public const DEFAULT_HIDDEN = false;
+    public const DEFAULT_UNIQUE = false;
+    public const DEFAULT_REQUIRED = false;
+    public const DEFAULT_ALLOW_NULL = true;
+    public const DEFAULT_STORABLE = true;
+    public const DEFAULT_VALIDATABLE = true;
+    public const DEFAULT_ACTIVE = true;
 
     /**
      * @var string

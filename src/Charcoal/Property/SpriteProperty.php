@@ -7,10 +7,8 @@ use InvalidArgumentException;
 use PDO;
 use RuntimeException;
 use SimpleXMLElement;
-
 // from 'charcoal-view'
 use Charcoal\View\ViewInterface;
-
 // from 'pimple'
 use Pimple\Container;
 
@@ -136,24 +134,32 @@ class SpriteProperty extends AbstractProperty implements SelectablePropertyInter
 
             $choices = [];
 
-            if (isset($xml->defs)) {
-                $xml = $xml->defs;
-            }
-
             if (!isset($xml->symbol)) {
-                throw new RuntimeException(
-                    'Missing <symbol> element(s)'
-                );
+                if (isset($xml->defs->symbol)) {
+                    $xml = $xml->defs;
+                } else {
+                    throw new RuntimeException(
+                        'Missing <symbol> element(s)'
+                    );
+                }
             }
 
+            $i = -1;
             foreach ($xml->symbol as $node) {
-                $id = (string) $node->attributes()->id;
+                $i++;
+
+                $id = (string)$node->attributes()->id;
 
                 if (!$id) {
                     $this->logger->warning(sprintf(
                         'Invalid SVG/XML spritesheet: Missing or empty ID attribute on: %s',
                         $node->asXML()
-                    ));
+                    ), [
+                        'property'     => $this['ident'],
+                        'symbolIndex'  => $i,
+                        'symbolID'     => null,
+                        'spriteSource' => $spritePath,
+                    ]);
                     continue;
                 }
 
@@ -161,7 +167,12 @@ class SpriteProperty extends AbstractProperty implements SelectablePropertyInter
                     $this->logger->warning(sprintf(
                         'Invalid SVG/XML spritesheet: Duplicate ID attribute: %s',
                         $id
-                    ));
+                    ), [
+                        'property'     => $this['ident'],
+                        'symbolIndex'  => $i,
+                        'symbolID'     => $id,
+                        'spriteSource' => $spritePath,
+                    ]);
                     continue;
                 }
 
@@ -174,7 +185,9 @@ class SpriteProperty extends AbstractProperty implements SelectablePropertyInter
                 'Invalid SVG/XML spritesheet: %s',
                 $e->getMessage()
             ), [
-                'exception' => $e,
+                'property'     => $this['ident'],
+                'spriteSource' => $spritePath,
+                'exception'    => $e,
             ]);
 
             return [];
@@ -197,11 +210,11 @@ class SpriteProperty extends AbstractProperty implements SelectablePropertyInter
             ]);
 
             $val = $this->view->render(
-                '<svg fill="currentColor" viewBox="0 0 25 25" height="40px" role="img" aria-label="'.$label.'">'.
-                '<use xlink:href="{{# withBaseUrl }}{{ spritePathWithHash }}{{/ withBaseUrl }}"></use>'.
+                '<svg fill="currentColor" viewBox="0 0 25 25" height="40px" role="img" aria-label="' . $label . '">' .
+                '<use xlink:href="{{# withBaseUrl }}{{ spritePathWithHash }}{{/ withBaseUrl }}"></use>' .
                 '</svg>',
                 [
-                    'spritePathWithHash' => $this->getSprite().'#'.$val,
+                    'spritePathWithHash' => $this->getSprite() . '#' . $val,
                 ]
             );
         }
@@ -219,7 +232,7 @@ class SpriteProperty extends AbstractProperty implements SelectablePropertyInter
             $val = $this->view->render(
                 '{{# withBaseUrl }}{{ spritePathWithHash }}{{/ withBaseUrl }}',
                 [
-                    'spritePathWithHash' => $this->getSprite().'#'.$val,
+                    'spritePathWithHash' => $this->getSprite() . '#' . $val,
                 ]
             );
         }
@@ -258,7 +271,7 @@ class SpriteProperty extends AbstractProperty implements SelectablePropertyInter
             $choice = [
                 'value'              => $choiceIdent,
                 'label'              => $this->translator()->translation($choiceIdent),
-                'spritePathWithHash' => $this['sprite'].'#'.$choice
+                'spritePathWithHash' => $this['sprite'] . '#' . $choice
             ];
         } elseif (is_array($choice)) {
             if (!isset($choice['value'])) {
@@ -266,11 +279,11 @@ class SpriteProperty extends AbstractProperty implements SelectablePropertyInter
             }
 
             if (!isset($choice['spritePathWithHash'])) {
-                $choice['spritePathWithHash'] = (string)$this['sprite'].'#'.$choiceIdent;
+                $choice['spritePathWithHash'] = (string)$this['sprite'] . '#' . $choiceIdent;
             }
 
             if (!isset($choice['spritePathWithHash'])) {
-                $choice['spritePathWithHash'] = (string)$this['sprite'].'#'.$choiceIdent;
+                $choice['spritePathWithHash'] = (string)$this['sprite'] . '#' . $choiceIdent;
                 $choice['label']              = $this->translator()->translation($choiceIdent);
             }
         } else {

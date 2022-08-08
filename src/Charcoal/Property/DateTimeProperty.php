@@ -7,7 +7,6 @@ use DateTime;
 use DateTimeInterface;
 use Exception;
 use InvalidArgumentException;
-
 // From 'charcoal-property'
 use Charcoal\Property\AbstractProperty;
 
@@ -16,9 +15,9 @@ use Charcoal\Property\AbstractProperty;
  */
 class DateTimeProperty extends AbstractProperty
 {
-    const DEFAULT_MIN = null;
-    const DEFAULT_MAX = null;
-    const DEFAULT_FORMAT = 'Y-m-d H:i:s';
+    public const DEFAULT_MIN = null;
+    public const DEFAULT_MAX = null;
+    public const DEFAULT_FORMAT = 'Y-m-d H:i:s';
 
     /**
      * @var DateTimeInterface|null
@@ -305,7 +304,8 @@ class DateTimeProperty extends AbstractProperty
      */
     private function dateTimeVal($val)
     {
-        if ($val === null ||
+        if (
+            $val === null ||
             (is_string($val) && ! strlen(trim($val))) ||
             (is_array($val) && ! count(array_filter($val, 'strlen')))
         ) {

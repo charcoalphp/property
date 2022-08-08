@@ -4,14 +4,11 @@ namespace Charcoal\Property;
 
 use InvalidArgumentException;
 use OutOfBoundsException;
-
 // From 'charcoal-image'
 use Charcoal\Image\ImageFactory;
 use Charcoal\Image\ImageInterface;
-
 // From 'charccoal-translator'
 use Charcoal\Translator\Translation;
-
 // From 'charcoal-property'
 use Charcoal\Property\FileProperty;
 
@@ -22,12 +19,12 @@ use Charcoal\Property\FileProperty;
  */
 class ImageProperty extends FileProperty
 {
-    const DEFAULT_DRIVER_TYPE = 'imagick';
+    public const DEFAULT_DRIVER_TYPE = 'imagick';
 
-    const EFFECTS_EVENT_SAVE    = 'save';
-    const EFFECTS_EVENT_NEVER   = 'never';
-    const EFFECTS_EVENT_UPLOAD  = 'upload';
-    const DEFAULT_APPLY_EFFECTS = self::EFFECTS_EVENT_SAVE;
+    public const EFFECTS_EVENT_SAVE    = 'save';
+    public const EFFECTS_EVENT_NEVER   = 'never';
+    public const EFFECTS_EVENT_UPLOAD  = 'upload';
+    public const DEFAULT_APPLY_EFFECTS = self::EFFECTS_EVENT_SAVE;
 
     /**
      * One or more effects to apply on the image.
@@ -495,10 +492,10 @@ class ImageProperty extends FileProperty
 
             // @todo Save original file here
             $valuePath = ($isAbsolute ? '' : $basePath);
-            $image->open(static::normalizePath($valuePath.$value));
+            $image->open(static::normalizePath($valuePath . $value));
             $target = null;
             if ($isAbsolute) {
-                $target = static::normalizePath($basePath.$this['uploadPath'].pathinfo($value, PATHINFO_BASENAME));
+                $target = static::normalizePath($basePath . $this['uploadPath'] . pathinfo($value, PATHINFO_BASENAME));
             }
 
             foreach ($effects as $fxGroup) {
@@ -543,13 +540,13 @@ class ImageProperty extends FileProperty
                     if ($rename || $copy) {
                         if ($copy) {
                             $copy   = $this->renderFileRenamePattern(($target ?: $value), $copy);
-                            $exists = $this->fileExists(static::normalizePath($basePath.$copy));
+                            $exists = $this->fileExists(static::normalizePath($basePath . $copy));
                             $doCopy = ($copy && ($this['overwrite'] || !$exists));
                         }
 
                         if ($rename) {
                             $value    = $this->renderFileRenamePattern(($target ?: $value), $rename);
-                            $exists   = $this->fileExists(static::normalizePath($basePath.$value));
+                            $exists   = $this->fileExists(static::normalizePath($basePath . $value));
                             $doRename = ($value && ($this['overwrite'] || !$exists));
                         }
 
@@ -564,20 +561,20 @@ class ImageProperty extends FileProperty
 
                         if ($rename || $copy) {
                             if ($doCopy) {
-                                $image->save(static::normalizePath($valuePath.$copy));
+                                $image->save(static::normalizePath($valuePath . $copy));
                             }
 
                             if ($doRename) {
-                                $image->save(static::normalizePath($valuePath.$value));
+                                $image->save(static::normalizePath($valuePath . $value));
                             }
                         } else {
-                            $image->save($target ?: static::normalizePath($valuePath.$value));
+                            $image->save($target ?: static::normalizePath($valuePath . $value));
                         }
                     }
                 }
                 // reset to default image allow starting effects chains from original image.
                 if ($fxGroup['reset']) {
-                    $image = $image->open(static::normalizePath($valuePath.$value));
+                    $image = $image->open(static::normalizePath($valuePath . $value));
                 }
             }
         }
